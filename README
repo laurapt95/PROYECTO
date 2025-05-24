@@ -1,0 +1,76 @@
+HOLI ADRIANCHOOOOO!!!
+
+Te comento, hay dos carpetas:
+  - plugins/var-www-html-wpcontent-plugins-externallogin -> Referente al directorio 📁 /var/www/html/wp-content/plugins/external-login
+  - tools/var-www-html/ -> Referente al directorio 📁 /var/www/html/tool
+
+| Archivo / Carpeta                                  | Descripción                                                                    | Uso                                       |
+|----------------------------------------------------|--------------------------------------------------------------------------------|-------------------------------------------|
+| 📁 /var/www/html/tools                             |                                                                                |                                           |
+| ├── asignar_coordenadas.php                        | Script que obtiene coordenadas de localidades usando OpenStreetMap (Nominatim) | Solo lectura y ejecución puntual          |
+| 📁 /var/www/html/wp-content/plugins/external-login |                                                                                |                                           |
+| ├── external-login.php                             | Plugin principal: incluye login, registro, formularios, panel, mapa, etc.      | Archivo principal del plugin              |
+| ├── fill_location.php                              | Reconstruye selectores de ubicación al editar un evento                        | Usado vía AJAX en modificación de eventos |
+| ├── get_ccaa.php                                   | Devuelve las CCAA según el país seleccionado                                   | AJAX en registro de eventos               |
+| ├── get_provincias.php                             | Devuelve provincias según CCAA seleccionada                                    | AJAX en registro de eventos               |
+| ├── get_municipios.php                             | Devuelve municipios según provincia seleccionada                               | AJAX en registro de eventos               |
+| ├── get_localidades.php                            | Devuelve localidades según municipio seleccionado                              | AJAX en registro de eventos               |
+| ├── get_eventos_json.php                           | Devuelve todos los eventos con coordenadas en JSON para el mapa público        | Usado en shortcode del mapa               |
+
+
+📁 Directorio tools [ /var-www-html/tools ]
+
+├── asignar_coordenadas.php
+  Script que utiliza una API pública llamada Nominatim (basada en OpenStreetMap). Esta API permite buscar localidades por nombre 
+  y devuelve sus coordenadas exactas al ejecutarlo que automáticamente las coordenadas geográficas (latitud y longitud) de cada localidad registrada 
+  en la base de datos externa que tengo a wordpress.
+  De este no habria que mirar nada, solo tengo que explicarlo pero te lo adjunto por si lo necesitas
+
+📁 Directorio plugins [ /var/www/html/wp-content/plugins/external-login ]
+
+Es donde estan todos los ¿plugins personalizados? que tengo en la propia maquina virtual donde se aloja wordpress.
+He tenido que hacerlo porque hasta donde llegue, los plugins de wordpress no conectan con una base de datos que no sea la propia de wordppres a menos
+que tengas un plan de estos de pago. Asique no use plugins propios de la app sino que los tuve que crear yo.
+toda la lógica (login, formularios, mapas, etc.) está hecha desde cero en esta carpeta.
+
+├── external-login.php
+  El ARCHIVO. Este es el archivo principal de que comenté. 
+
+├── fill_location.php
+  Este archivo se encarga de reconstruir toda la cadena de ubicación (CCAA → Provincia → Municipio → Localidad) a partir de un id_localidad. 
+  Se utiliza cuando un usuario va a modificar un evento existente propio, para que el formulario cargue automáticamente los selectores con 
+  los valores correctos ya guardados. Devuelve los datos en formato JSON. (No se que es esto de JSON)
+
+├── get_eventos_json.php
+  Este archivo devuelve todos los eventos futuros registrados en la base de datos que tengan coordenadas geográficas (latitud y longitud).
+  Los datos se devuelven en formato JSON, y se utilizan para mostrar chinchetas en el mapa del buscador público de eventos ([buscar_eventos_mapa]).
+
+├── get_cca.php get_provincia, get_municipio.php localidad_cca.php (AJAX dinámicos para formularios. Tampoco se lo que es)
+  Estos archivos devuelven datos en formato JSON a medida que el usuario selecciona opciones en el formulario de eventos.
+    - get_cca.php -> Devuelve todas las CCAA asociadas a un país
+    - get_provincia -> Devuelve provincias de una CCAA
+    - get_municipio.php -> Devuelve municipios de una provincia
+    - localidad_cca.php -> Devuelve localidades de un municipio 
+
+BASE DE DATOS eventosdb
+
+| Tabla                   | Campos principales                                                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **PAISES**              | `id_pais (PK)`, `nombre`                                                                                                          |
+| **CCAA**                | `id_ccaa (PK)`, `nombre`, `id_pais (FK)`                                                                                          |
+| **PROVINCIAS**          | `id_provincia (PK)`, `nombre`, `id_ccaa (FK)`                                                                                     |
+| **MUNICIPIOS**          | `id_municipio (PK)`, `nombre`, `id_provincia (FK)`                                                                                |
+| **LOCALIDADES**         | `id_localidad (PK)`, `nombre`, `latitud`, `longitud`, `id_municipio (FK)`                                                         |
+| **USUARIOS**            | `id_usuario (PK)`, `alias`, `tipo_usuario`, `nombre`, `apellidos`, `email`, `password`                                            |
+| **EVENTOS**             | `id_evento (PK)`, `nombre_evento`, `tipo_evento`, `descripcion`, `fecha_ini`, `fecha_fin`, `id_localidad (FK)`, `id_usuario (FK)` |
+| **VOTACIONES\_EVENTOS** | `id_usuario (FK)`, `id_evento (FK)`, `estrellas`, `fecha_voto`                                                                    |
+
+  
+
+
+
+
+
+
+
+  
