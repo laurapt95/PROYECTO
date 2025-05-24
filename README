@@ -36,6 +36,52 @@ toda la lógica (login, formularios, mapas, etc.) está hecha desde cero en esta
 ├── external-login.php
   El ARCHIVO. Este es el archivo principal de que comenté. 
 
+      1. [external_login_form]
+            Función: Muestra un formulario de inicio de sesión que valida al usuario contra una base de datos externa.
+            Comportamiento: Si los datos son correctos, guarda el alias del usuario en la sesión y redirige a /bienvenido.
+
+      2. [verificar_login]
+            Función: Protege páginas privadas.
+            Comportamiento: Si el usuario no está autenticado (sin sesión iniciada), lo redirige a /iniciar-sesion.
+
+      3. [formulario_registro]
+            Función: Muestra un formulario para registrar nuevos usuarios.
+            Comportamiento: Verifica que el alias y el email no estén en uso, valida la contraseña y guarda los datos en la base de datos externa.
+
+      4. [panel_bienvenida]
+            Función: Muestra un panel de bienvenida personalizado con opciones.
+            Comportamiento: Muestra el alias del usuario, su valoración media (estrellas) y accesos rápidos a otras secciones.
+
+      5. [cerrar_sesion]
+            Función: Finaliza la sesión actual.
+            Comportamiento: Borra la sesión del usuario y redirige a la página principal.
+
+      6. [configurar_cuenta]
+            Función: Permite modificar los datos del perfil del usuario.
+            Comportamiento: Muestra y actualiza el tipo de usuario, nombre, email, contraseña, etc.
+
+      7. [formulario_registrar_evento]
+            Función: Permite crear y registrar nuevos eventos.
+            Comportamiento: El formulario incluye ubicación (mapa), tipo, fecha y descripción, con dependencias dinámicas entre país, provincia, etc.
+            Nota: A este aun tengo que ponerle para que solo se puedan registrar eventos en fecha que aun no ha pasado. Tengo el codigo ya.
+
+      8. [modificar_eventos_usuario]
+            Función: Permite modificar o eliminar eventos creados por el usuario.
+            Comportamiento: Carga los eventos futuros del usuario y permite editarlos o eliminarlos directamente.
+
+      9. [contador_eventos]
+            Función: Muestra un resumen de eventos registrados.
+            Comportamiento: Agrupa los eventos por tipo y muestra un contador total y por categoría.
+            Nota: es para un contador que tengo en la pagina principal
+
+      10. [votar_evento]
+            Función: Permite valorar eventos pasados de otros usuarios.
+            Comportamiento: Muestra eventos ya finalizados y permite enviar una valoración con estrellas.
+
+      11. [buscar_eventos_mapa]
+            Función: Muestra todos los eventos registrados en un mapa interactivo.
+            Comportamiento: Usa Leaflet.js para mostrar marcadores con detalles, ubicación y puntuación.
+
 ├── fill_location.php
   Este archivo se encarga de reconstruir toda la cadena de ubicación (CCAA → Provincia → Municipio → Localidad) a partir de un id_localidad. 
   Se utiliza cuando un usuario va a modificar un evento existente propio, para que el formulario cargue automáticamente los selectores con 
