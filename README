@@ -12,16 +12,19 @@ Este directorio contiene el plugin personalizado `external-login`, diseñado esp
                    ├── conexion.php
                    ├── external-login.php
                    ├── login.php
+                   ├── verificar_login
                    └── README.txt
 
 
 ## tools/asignar_coordenadas.php
+Tambien añado este script que esta en /var/www/html/tools
+      Este script externo permite obtener automáticamente las coordenadas geográficas (latitud y longitud) de las localidades registradas en la base de datos.
+      Utiliza el servicio público de Nominatim (OpenStreetMap).
 
-Este script externo permite obtener automáticamente las coordenadas geográficas (latitud y longitud) de las localidades registradas en la base de datos.
-Utiliza el servicio público de Nominatim (OpenStreetMap).
+## Plugin external-login, 
+      Ubicado en /var/www/html/wp-content/plugins/external-login
 
 ## /ajax
-
 Scripts que responden a peticiones **AJAX** del cliente. Devuelven datos en formato JSON para los formularios dinámicos y el mapa.
 
 | Archivo                   | Descripción                                                                 |
@@ -52,7 +55,7 @@ Contiene scripts PHP que se registran como **shortcodes** en WordPress, permitie
 
 ---
 
-## 📄 Archivos raíz
+## / Archivos raíz - core
 
 | Archivo               | Función                                                                                     |
 |-----------------------|---------------------------------------------------------------------------------------------|
@@ -60,6 +63,7 @@ Contiene scripts PHP que se registran como **shortcodes** en WordPress, permitie
 | `conexion.php`        | Maneja la conexión a la base de datos externa `eventosdb` mediante mysqli.                  |
 | `login.php`           | Script de inicio de sesión. Verifica alias, password (hasheada) y lanza sesión.             |
 | `cerrar_sesion.php`   | Destruye la sesión activa y redirige al formulario de inicio.                               |
+| `verificar_login.php` | Verifica si existe una sesión activa y redirige a panel_bienvenida.php si está iniciada.    |                             |
 | `README.txt`          | (Este mismo contenido o resumen).                                                           |
 
 ---
