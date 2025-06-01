@@ -1,0 +1,33 @@
+<?php
+// Establecer cabecera para que el navegador interprete la respuesta como JSON
+header('Content-Type: application/json');
+
+// Validar que se ha recibido el parámetro id_pais
+if (!isset($_GET['id_pais'])) {
+    echo json_encode([]);
+    exit;
+}
+
+// Convertir id_pais a número entero para evitar inyección
+$id_pais = intval($_GET['id_pais']);
+
+// Incluir conexión desde la raíz del plugin
+require_once __DIR__ . '/../conexion.php';
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// Preparar y ejecutar la consulta SQL para obtener las CCAA del país
+$stmt = $conn->prepare("SELECT id_ccaa, nombre FROM CCAA WHERE id_pais = ?");
+$stmt->bind_param("i", $id_pais);
+$stmt->execute();
+$res = $stmt->get_result();
+
+// Recoger resultados en un array
+$ccaa = [];
+while ($row = $res->fetch_assoc()) {
+    $ccaa[] = $row;
+}
+
+// Devolver resultados en formato JSON
+echo json_encode($ccaa);
+exit;
+?>
