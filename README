@@ -1,117 +1,84 @@
-HOLI ADRIANCHOOOOO!!!
+ ## /ajax
 
-Te comento, hay dos carpetas:
-  - plugins/var-www-html-wpcontent-plugins-externallogin -> Referente al directorio 📁 /var/www/html/wp-content/plugins/external-login
-  - tools/var-www-html/ -> Referente al directorio 📁 /var/www/html/tool
+Scripts que responden a peticiones **AJAX** del cliente. Devuelven datos en formato JSON para los formularios dinámicos y el mapa.
 
-| Archivo / Carpeta                                  | Descripción                                                                    | Uso                                       |
-|----------------------------------------------------|--------------------------------------------------------------------------------|-------------------------------------------|
-| 📁 /var/www/html/tools                             |                                                                                |                                           |
-| ├── asignar_coordenadas.php                        | Script que obtiene coordenadas de localidades usando OpenStreetMap (Nominatim) | Solo lectura y ejecución puntual          |
-| 📁 /var/www/html/wp-content/plugins/external-login |                                                                                |                                           |
-| ├── external-login.php                             | Plugin principal: incluye login, registro, formularios, panel, mapa, etc.      | Archivo principal del plugin              |
-| ├── fill_location.php                              | Reconstruye selectores de ubicación al editar un evento                        | Usado vía AJAX en modificación de eventos |
-| ├── get_ccaa.php                                   | Devuelve las CCAA según el país seleccionado                                   | AJAX en registro de eventos               |
-| ├── get_provincias.php                             | Devuelve provincias según CCAA seleccionada                                    | AJAX en registro de eventos               |
-| ├── get_municipios.php                             | Devuelve municipios según provincia seleccionada                               | AJAX en registro de eventos               |
-| ├── get_localidades.php                            | Devuelve localidades según municipio seleccionado                              | AJAX en registro de eventos               |
-| ├── get_eventos_json.php                           | Devuelve todos los eventos con coordenadas en JSON para el mapa público        | Usado en shortcode del mapa               |
+| Archivo                   | Descripción                                                                 |
+|---------------------------|-----------------------------------------------------------------------------|
+| `fill_location.php`       | Reconstruye toda la cadena de ubicación a partir de un `id_localidad`.     |
+| `get_eventos_json.php`    | Devuelve eventos públicos con coordenadas (para el mapa de Leaflet.js).    |
+| `get_ccaa.php`            | Devuelve las CCAA según el país.                                           |
+| `get_municipios.php`      | Devuelve municipios según provincia.                                       |
+| `get_localidades.php`     | Devuelve localidades según municipio seleccionado.                         |
 
+---
 
-📁 Directorio tools [ /var-www-html/tools ]
+## /shortcodes
 
-├── asignar_coordenadas.php
-  Script que utiliza una API pública llamada Nominatim (basada en OpenStreetMap). Esta API permite buscar localidades por nombre 
-  y devuelve sus coordenadas exactas al ejecutarlo que automáticamente las coordenadas geográficas (latitud y longitud) de cada localidad registrada 
-  en la base de datos externa que tengo a wordpress.
-  De este no habria que mirar nada, solo tengo que explicarlo pero te lo adjunto por si lo necesitas
+Contiene scripts PHP que se registran como **shortcodes** en WordPress, permitiendo insertar funcionalidades en páginas sin tocar el tema.
 
-📁 Directorio plugins [ /var/www/html/wp-content/plugins/external-login ]
+| Archivo                          | Funcionalidad principal                                                      |
+|----------------------------------|------------------------------------------------------------------------------|
+| `buscar_eventos_mapa.php`        | Muestra todos los eventos futuros en un mapa interactivo (Leaflet.js).      |
+| `configurar_cuenta.php`          | Formulario para editar los datos del usuario (correo, contraseña, etc.).    |
+| `contador_eventos.php`           | Muestra estadísticas públicas por tipo de evento.                           |
+| `formulario_registrar_evento.php`| Registro de eventos: ubicación jerárquica + mapa + validaciones.            |
+| `formulario_registro.php`        | Registro de nuevos usuarios. Verifica alias, correo y guarda el hash.       |
+| `modificar_eventos_usuario.php`  | Editar o borrar eventos propios (solo los futuros).                         |
+| `panel_bienvenida.php`           | Dashboard con resumen de votos, alias y accesos rápidos.                    |
+| `votar_evento.php`               | Votar eventos pasados (estrellas y comentario opcional).                    |
+| `verificar_login.php`            | Verifica sesión iniciada, si no, redirige a login.                          |
 
-Es donde estan todos los ¿plugins personalizados? que tengo en la propia maquina virtual donde se aloja wordpress.
-He tenido que hacerlo porque hasta donde llegue, los plugins de wordpress no conectan con una base de datos que no sea la propia de wordppres a menos
-que tengas un plan de estos de pago. Asique no use plugins propios de la app sino que los tuve que crear yo.
-toda la lógica (login, formularios, mapas, etc.) está hecha desde cero en esta carpeta.
+---
 
-├── external-login.php
-  El ARCHIVO. Este es el archivo principal de que comenté. 
+## 📄 Archivos raíz
 
-      1. [external_login_form]
-            Función: Muestra un formulario de inicio de sesión que valida al usuario contra una base de datos externa.
-            Comportamiento: Si los datos son correctos, guarda el alias del usuario en la sesión y redirige a /bienvenido.
+| Archivo               | Función                                                                                     |
+|-----------------------|---------------------------------------------------------------------------------------------|
+| `external-login.php`  | Archivo principal. Registra todos los shortcodes y funciones principales del plugin.        |
+| `conexion.php`        | Maneja la conexión a la base de datos externa `eventosdb` mediante mysqli.                  |
+| `login.php`           | Script de inicio de sesión. Verifica alias, password (hasheada) y lanza sesión.             |
+| `cerrar_sesion.php`   | Destruye la sesión activa y redirige al formulario de inicio.                               |
+| `README.txt`          | (Este mismo contenido o resumen).                                                           |
 
-      2. [verificar_login]
-            Función: Protege páginas privadas.
-            Comportamiento: Si el usuario no está autenticado (sin sesión iniciada), lo redirige a /iniciar-sesion.
+---
 
-      3. [formulario_registro]
-            Función: Muestra un formulario para registrar nuevos usuarios.
-            Comportamiento: Verifica que el alias y el email no estén en uso, valida la contraseña y guarda los datos en la base de datos externa.
+## Notas Técnicas
 
-      4. [panel_bienvenida]
-            Función: Muestra un panel de bienvenida personalizado con opciones.
-            Comportamiento: Muestra el alias del usuario, su valoración media (estrellas) y accesos rápidos a otras secciones.
+- El plugin no depende de la base de datos nativa de WordPress.
+- Todos los formularios usan AJAX y JSON para una experiencia fluida y sin recarga.
+- Las contraseñas se almacenan cifradas con `password_hash()` (bcrypt).
+- Se utiliza el usuario `preventuser` con permisos restringidos sobre la BBDD.
 
-      5. [cerrar_sesion]
-            Función: Finaliza la sesión actual.
-            Comportamiento: Borra la sesión del usuario y redirige a la página principal.
+---
 
-      6. [configurar_cuenta]
-            Función: Permite modificar los datos del perfil del usuario.
-            Comportamiento: Muestra y actualiza el tipo de usuario, nombre, email, contraseña, etc.
+## Requisitos para funcionar
 
-      7. [formulario_registrar_evento]
-            Función: Permite crear y registrar nuevos eventos.
-            Comportamiento: El formulario incluye ubicación (mapa), tipo, fecha y descripción, con dependencias dinámicas entre país, provincia, etc.
-            Nota: A este aun tengo que ponerle para que solo se puedan registrar eventos en fecha que aun no ha pasado. Tengo el codigo ya.
+- Base de datos externa `eventosdb` con tablas relacionadas: usuarios, eventos, votaciones, localización.
+- WordPress instalado en el servidor.
+- Plugin activado en `/wp-content/plugins/external-login`.
 
-      8. [modificar_eventos_usuario]
-            Función: Permite modificar o eliminar eventos creados por el usuario.
-            Comportamiento: Carga los eventos futuros del usuario y permite editarlos o eliminarlos directamente.
+---
 
-      9. [contador_eventos]
-            Función: Muestra un resumen de eventos registrados.
-            Comportamiento: Agrupa los eventos por tipo y muestra un contador total y por categoría.
-            Nota: es para un contador que tengo en la pagina principal
+## Dependencias externas
 
-      10. [votar_evento]
-            Función: Permite valorar eventos pasados de otros usuarios.
-            Comportamiento: Muestra eventos ya finalizados y permite enviar una valoración con estrellas.
+- API pública de OpenStreetMap (Nominatim) para asignación de coordenadas.
+- Leaflet.js para visualización de eventos en el mapa.
 
-      11. [buscar_eventos_mapa]
-            Función: Muestra todos los eventos registrados en un mapa interactivo.
-            Comportamiento: Usa Leaflet.js para mostrar marcadores con detalles, ubicación y puntuación.
+---
 
-├── fill_location.php
-  Este archivo se encarga de reconstruir toda la cadena de ubicación (CCAA → Provincia → Municipio → Localidad) a partir de un id_localidad. 
-  Se utiliza cuando un usuario va a modificar un evento existente propio, para que el formulario cargue automáticamente los selectores con 
-  los valores correctos ya guardados. Devuelve los datos en formato JSON. (No se que es esto de JSON)
+## Seguridad
 
-├── get_eventos_json.php
-  Este archivo devuelve todos los eventos futuros registrados en la base de datos que tengan coordenadas geográficas (latitud y longitud).
-  Los datos se devuelven en formato JSON, y se utilizan para mostrar chinchetas en el mapa del buscador público de eventos ([buscar_eventos_mapa]).
+- Toda la interacción con la base de datos pasa por `conexion.php`, evitando duplicación de código.
+- Datos sensibles (como contraseñas) no están expuestos en texto plano.
 
-├── get_cca.php get_provincia, get_municipio.php localidad_cca.php (AJAX dinámicos para formularios. Tampoco se lo que es)
-  Estos archivos devuelven datos en formato JSON a medida que el usuario selecciona opciones en el formulario de eventos.
-    - get_cca.php -> Devuelve todas las CCAA asociadas a un país
-    - get_provincia -> Devuelve provincias de una CCAA
-    - get_municipio.php -> Devuelve municipios de una provincia
-    - localidad_cca.php -> Devuelve localidades de un municipio 
+---
 
-BASE DE DATOS eventosdb
+## Créditos
 
-| Tabla                   | Campos principales                                                                                                                |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **PAISES**              | `id_pais (PK)`, `nombre`                                                                                                          |
-| **CCAA**                | `id_ccaa (PK)`, `nombre`, `id_pais (FK)`                                                                                          |
-| **PROVINCIAS**          | `id_provincia (PK)`, `nombre`, `id_ccaa (FK)`                                                                                     |
-| **MUNICIPIOS**          | `id_municipio (PK)`, `nombre`, `id_provincia (FK)`                                                                                |
-| **LOCALIDADES**         | `id_localidad (PK)`, `nombre`, `latitud`, `longitud`, `id_municipio (FK)`                                                         |
-| **USUARIOS**            | `id_usuario (PK)`, `alias`, `tipo_usuario`, `nombre`, `apellidos`, `email`, `password`                                            |
-| **EVENTOS**             | `id_evento (PK)`, `nombre_evento`, `tipo_evento`, `descripcion`, `fecha_ini`, `fecha_fin`, `id_localidad (FK)`, `id_usuario (FK)` |
-| **VOTACIONES\_EVENTOS** | `id_usuario (FK)`, `id_evento (FK)`, `estrellas`, `fecha_voto`                                                                    |
+Desarrollado por Laura Penedo Torino como parte del proyecto ASIR 2024-2025: “Preven-T: Aplicación Web para la notificación de eventos sonoros”.
 
-  
+---
+
 
 
 
