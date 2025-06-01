@@ -1,4 +1,26 @@
- ## /ajax
+Este directorio contiene el plugin personalizado `external-login`, diseñado específicamente para WordPress con conexión a una base de datos externa (`eventosdb`).
+
+/
+├── tools/
+│ └── asignar_coordenadas.php
+└── wp-content/
+      └── plugins/
+            └── external-login/
+                   ├── ajax/
+                   ├── shortcodes/
+                   ├── cerrar_sesion.php
+                   ├── conexion.php
+                   ├── external-login.php
+                   ├── login.php
+                   └── README.txt
+
+
+## tools/asignar_coordenadas.php
+
+Este script externo permite obtener automáticamente las coordenadas geográficas (latitud y longitud) de las localidades registradas en la base de datos.
+Utiliza el servicio público de Nominatim (OpenStreetMap).
+
+## /ajax
 
 Scripts que responden a peticiones **AJAX** del cliente. Devuelven datos en formato JSON para los formularios dinámicos y el mapa.
 
